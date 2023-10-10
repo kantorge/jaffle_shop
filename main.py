@@ -1,5 +1,5 @@
 # This script is intended to do the following:
-# 1. Use the same GCP service account key as the main dbt project, located in the .keys folder
+# 1. Use the GCP service account key from the Secret Manager, located in the /keys/ folder
 # 2. Load any libraries needed to connect to Firestore
 # 3. Connect to Firestore, using the service account key and the project ID
 # 4. Query Firestore for the data needed for the dbt project
@@ -16,7 +16,7 @@ from google.cloud import firestore
 from google.cloud import logging
 from dbt.cli.main import dbtRunner, dbtRunnerResult
 
-# Set the path to the service account key, referring the generic project ENV variable
+# Set the path to the service account key, loaded by Cloud Run from Secret Manager
 keyfile_path = '/keys/service-account.json'
 
 # Get the project ID from the service account key
@@ -24,15 +24,14 @@ with open(keyfile_path) as f:
     data = json.load(f)
     project_id = data['project_id']
 
-# Set the collection name
+# Set the collection and document name
 collection_name = 'dbt-settings'
-
-# Set the document name
 document_name = 'dbt-settings'
 
 # Authenticate and initialize Firestore
 db = firestore.Client.from_service_account_json(keyfile_path)
 
+# Get the document from Firestore
 doc_ref = db.collection(collection_name).document(document_name)
 doc = doc_ref.get()
 
@@ -56,24 +55,22 @@ for key in mandatory_keys:
 if len(missing_keys) > 0:
     raise ValueError('The following mandatory keys are missing from Firestore: ' + ', '.join(missing_keys))
 
-# Push all available data to the environment variables
+# TODO: Validate if the insentric_schema_version is within the allowed range
+
+# Push all available data to the environment variables, which will be used by dbt
 for key, value in data.items():
     os.environ['DBT_ENV_' + key.upper()] = str(value)
 
 # Instantiate the logging client
 logging_client = logging.Client()
-
-# Set the log name
 log_name = 'dbt-run'
 logger = logging_client.logger(log_name)
 
 # Run the dbt project commands
 dbt = dbtRunner()
 
-# Set the arguments for running the models
+# Set the arguments for dbt, and run the dbt run commands
 cli_args = ["--quiet", "run", "--target", "cloudrun"]
-
-# Run the command
 res: dbtRunnerResult = dbt.invoke(cli_args)
 
 # Log the results to the cloud, based on the exit code
@@ -88,10 +85,8 @@ else:
     print(res.result)
     logger.log_text(res.exception, severity='ERROR')
 
-# Run the dbt test commands
+# Set the arguments for dbt, and run the dbt run commands
 cli_args = ["--quiet", "test", "--target", "cloudrun"]
-
-# Run the command
 res: dbtRunnerResult = dbt.invoke(cli_args)
 
 # Log the results to the cloud, based on the exit code

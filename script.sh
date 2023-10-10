@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# Authenticate with service account to enable Cloud Logging
-gcloud auth activate-service-account --key-file="/keys/service-account.json"
-
 # Pulls the most recent version of the dependencies listed in your packages.yml from git
 #dbt deps --profiles-dir .
 
