@@ -71,7 +71,7 @@ logger = logging_client.logger(log_name)
 dbt = dbtRunner()
 
 # Set the arguments for running the models
-cli_args = ["run", "--quiet", "--target", "cloudrun"]
+cli_args = ["--quiet", "run", "--target", "cloudrun"]
 
 # Run the command
 res: dbtRunnerResult = dbt.invoke(cli_args)
