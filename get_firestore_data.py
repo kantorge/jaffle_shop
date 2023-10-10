@@ -12,7 +12,6 @@ import google.cloud
 from google.cloud import firestore
 
 # Set the path to the service account key, referring the generic project ENV variable
-#keyfile_path = os.getenv('DBT_ENV_GCP_INSENTRIC_KEYFILE_DEV')
 keyfile_path = '/keys/service-account.json'
 
 # Get the project ID from the service account key
@@ -29,17 +28,13 @@ document_name = 'dbt-settings'
 # Authenticate and initialize Firestore
 db = firestore.Client.from_service_account_json(keyfile_path)
 
-# Create a reference to the collection
-query_ref = db.collection(collection_name)
+doc_ref = db.collection(collection_name).document(document_name)
+doc = doc_ref.get()
 
-# Get the documents in the collection that match the query
-docs = query_ref.stream()
-
-# Define a local dictionary to hold the data, and load all available data into it
+# Define a local dictionary to hold the data, and load all available key-value pairs into it.
 data = {}
-for doc in docs:
-    data[doc.id] = doc.to_dict()
-    print(f'{doc.id} => {doc.to_dict()}')
+if doc.exists:
+    data = doc.to_dict()
 
 # Define a list of the mandatory keys
 mandatory_keys = [
