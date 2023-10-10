@@ -23,8 +23,5 @@ RUN echo "deb https://packages.cloud.google.com/apt cloud-sdk main" | tee -a /et
 RUN curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
 RUN apt-get update && apt-get install google-cloud-cli -y
 
-# Authenticate with service account to enable Cloud Logging
-RUN gcloud auth activate-service-account --key-file=/keys/service-account.json
-
 # Define the entry point for your container
 ENTRYPOINT "./server"
