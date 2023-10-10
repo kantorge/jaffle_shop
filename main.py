@@ -88,4 +88,26 @@ else:
     print(res.result)
     logger.log_text(res.exception, severity='ERROR')
 
-# TODO: run dbt test
+# Run the dbt test commands
+cli_args = ["--quiet", "test", "--target", "cloudrun"]
+
+# Run the command
+res: dbtRunnerResult = dbt.invoke(cli_args)
+
+# Log the results to the cloud, based on the exit code
+if res.success:
+    logger.log_text('dbt test completed successfully', severity='INFO')
+elif res.exception is None:
+    logger.log_text('dbt test completed with warnings', severity='WARNING')
+    print(res.result)
+    logger.log_text(res.stdout, severity='WARNING')
+else:
+    logger.log_text('dbt test failed', severity='ERROR')
+    print(res.result)
+    logger.log_text(res.exception, severity='ERROR')
+
+# TODO: Run the dbt docs commands
+
+logger.log_text('dbt cloud run completed', severity='INFO')
+
+# End of script
