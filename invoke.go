@@ -9,7 +9,7 @@ import (
 
 func handler(w http.ResponseWriter, r *http.Request) {
         log.Print("dbt-jaffle-shop: received a request")
-        cmd := exec.Command("/bin/sh", "script.sh")
+        cmd := exec.Command("/bin/bash", "script.sh")
         cmd.Stdout = os.Stdout
         cmd.Stderr = os.Stderr
         err := cmd.Run()
