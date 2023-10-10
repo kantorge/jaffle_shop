@@ -68,15 +68,12 @@ log_name = 'dbt-run'
 logger = logging_client.logger(log_name)
 
 # Run the dbt project commands
-
-
-# initialize
 dbt = dbtRunner()
 
-# arguments for running the models
-cli_args = ["run", "--target", "cloudrun"]
+# Set the arguments for running the models
+cli_args = ["run", "--quiet", "--target", "cloudrun"]
 
-# run the command
+# Run the command
 res: dbtRunnerResult = dbt.invoke(cli_args)
 
 print(res)
