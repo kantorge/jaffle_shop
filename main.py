@@ -76,11 +76,19 @@ cli_args = ["run", "--quiet", "--target", "cloudrun"]
 # Run the command
 res: dbtRunnerResult = dbt.invoke(cli_args)
 
-print(res)
+# Get the CLI exit code
+exit_code = res.exit_code
 
-# inspect the results
-for r in res.result:
-    print(f"{r.node.name}: {r.status}")
-
+# Log the results to the cloud, based on the exit code
+if exit_code == 0:
+    logger.log_text('dbt run completed successfully', severity='INFO')
+    logger.log_text(res.result, severity='INFO')
+elif exit_code == 1:
+    logger.log_text('dbt run completed with warnings', severity='WARNING')
+    logger.log_text(res.result, severity='WARNING')
+    logger.log_text(res.stdout, severity='WARNING')
+else:
+    logger.log_text('dbt run failed', severity='ERROR')
+    logger.log_text(res.exception, severity='ERROR')
 
 # TODO: run dbt test
