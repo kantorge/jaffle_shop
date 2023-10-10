@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Authenticate with service account to enable Cloud Logging
 gcloud auth activate-service-account --key-file="/keys/service-account.json"
