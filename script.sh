@@ -3,6 +3,9 @@
 # Authenticate with service account to enable Cloud Logging
 gcloud auth activate-service-account --key-file="/keys/service-account.json"
 
+# Install Google Cloud SDK for Python
+pip3 install google-cloud
+
 # Retrieve values from Firesture using a dedicated Python script.
 python3 ./get_firestore_data.py
 printenv DBT_PY_TEST
