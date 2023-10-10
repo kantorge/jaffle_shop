@@ -1,3 +1,6 @@
+# Use a gcloud image based on debian:buster-slim for a lean production container.
+FROM gcr.io/google.com/cloudsdktool/cloud-sdk:slim
+
 # Install golang and build Go application
 FROM golang:1.13 as builder
 WORKDIR /app
@@ -16,12 +19,7 @@ COPY --from=builder /app/server ./
 COPY script.sh ./
 COPY . ./
 
-# Install Google Cloud SDK and authenticate with service account to enable Cloud Logging
-# Install Google Cloud SDK and authenticate with service account to enable Cloud Logging
-RUN apt-get update && apt-get install -y curl gnupg
-RUN echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
-RUN curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
-RUN apt-get update && apt-get install -y google-cloud-sdk
+# Authenticate with service account to enable Cloud Logging
 RUN gcloud auth activate-service-account --key-file=/keys/service-account.json
 
 # Define the entry point for your container
