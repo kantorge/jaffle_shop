@@ -4,12 +4,17 @@
 # 3. Connect to Firestore, using the service account key and the project ID
 # 4. Query Firestore for the data needed for the dbt project
 # 5. Load the data into environment variables, using the same naming convention as the dbt project
+# 6. Run the dbt project scripts
+# 7. Log to GCP based on the dbt results
 
 # Import libraries
+import dbt
 import os
 import json
 import google.cloud
 from google.cloud import firestore
+from google.cloud import logging
+from dbt.cli.main import dbtRunner, dbtRunnerResult
 
 # Set the path to the service account key, referring the generic project ENV variable
 keyfile_path = '/keys/service-account.json'
@@ -55,4 +60,30 @@ if len(missing_keys) > 0:
 for key, value in data.items():
     os.environ['DBT_ENV_' + key.upper()] = str(value)
 
-# End of script
+# Instantiate the logging client
+logging_client = logging.Client()
+
+# Set the log name
+log_name = 'dbt-run'
+logger = logging_client.logger(log_name)
+
+# Run the dbt project commands
+
+
+# initialize
+dbt = dbtRunner()
+
+# arguments for running the models
+cli_args = ["run", "--target", "cloudrun"]
+
+# run the command
+res: dbtRunnerResult = dbt.invoke(cli_args)
+
+print(res)
+
+# inspect the results
+for r in res.result:
+    print(f"{r.node.name}: {r.status}")
+
+
+# TODO: run dbt test

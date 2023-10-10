@@ -16,12 +16,5 @@ COPY --from=builder /app/server ./
 COPY script.sh ./
 COPY . ./
 
-# Install the gcloud command line tool
-RUN apt-get update
-RUN apt-get install apt-transport-https ca-certificates gnupg curl -y
-RUN echo "deb https://packages.cloud.google.com/apt cloud-sdk main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
-RUN curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
-RUN apt-get update && apt-get install google-cloud-cli -y
-
 # Define the entry point for your container
 ENTRYPOINT "./server"
