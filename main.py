@@ -76,6 +76,9 @@ cli_args = ["run", "--quiet", "--target", "cloudrun"]
 # Run the command
 res: dbtRunnerResult = dbt.invoke(cli_args)
 
+print(res)
+print(res.result)
+
 # Get the CLI exit code
 exit_code = res.exit_code
 
