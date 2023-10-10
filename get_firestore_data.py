@@ -39,6 +39,7 @@ docs = query_ref.stream()
 data = {}
 for doc in docs:
     data[doc.id] = doc.to_dict()
+    print(f'{doc.id} => {doc.to_dict()}')
 
 # Define a list of the mandatory keys
 mandatory_keys = [
@@ -46,10 +47,14 @@ mandatory_keys = [
     'mkto_table_postfix',
 ]
 
-# Validate if all mandatory keys are present. If not, raise an error.
+# Validate if all mandatory keys are present. Collect the missing keys in a list, and raise an error if any are missing
+missing_keys = []
 for key in mandatory_keys:
     if key not in data:
-        raise Exception('The key ' + key + ' is missing from the Firestore document ' + document_name + ' in the collection ' + collection_name + '.')
+        missing_keys.append(key)
+
+if len(missing_keys) > 0:
+    raise ValueError('The following mandatory keys are missing from Firestore: ' + ', '.join(missing_keys))
 
 # Push all available data to the environment variables
 for key, value in data.items():
