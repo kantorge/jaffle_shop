@@ -1,4 +1,6 @@
 #!/bin/sh
+gcloud auth activate-service-account --key-file=/keys/service-account.json
+
 dbt deps --profiles-dir .  # Pulls the most recent version of the dependencies listed in your packages.yml from git
 if dbt debug --target cloudrun --profiles-dir .; then
   gcloud logging write dbt-jaffle-shop "dbt debug succeeded"

@@ -19,8 +19,5 @@ COPY --from=builder /app/server ./
 COPY script.sh ./
 COPY . ./
 
-# Authenticate with service account to enable Cloud Logging
-RUN gcloud auth activate-service-account --key-file=/keys/service-account.json
-
 # Define the entry point for your container
 ENTRYPOINT "./server"
