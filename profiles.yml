@@ -11,4 +11,15 @@ jaffle_shop:
       keyfile: "./keys/service-account.json"
       priority: interactive
       threads: 4
+    cloudrun:
+      type: bigquery
+      project: beaming-might-304113
+      dataset: jaffle_shop
+      job_execution_timeout: 300
+      job_retries: 1
+      location: US
+      method: service-account
+      keyfile: "/keys/service-account.json"
+      priority: interactive
+      threads: 4
   target: dev
