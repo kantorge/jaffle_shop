@@ -4,13 +4,15 @@
 gcloud auth activate-service-account --key-file="/keys/service-account.json"
 
 # Install Google Cloud SDK for Python
-pip3 install google-cloud
+pip3 install google-cloud-firestore
 
 # Retrieve values from Firesture using a dedicated Python script.
 python3 ./get_firestore_data.py
 printenv DBT_PY_TEST
 
-dbt deps --profiles-dir .  # Pulls the most recent version of the dependencies listed in your packages.yml from git
+# Pulls the most recent version of the dependencies listed in your packages.yml from git
+#dbt deps --profiles-dir .
+
 if dbt debug --target cloudrun --profiles-dir .; then
   gcloud logging write dbt-jaffle-shop "dbt debug succeeded"
 else
