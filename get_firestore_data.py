@@ -3,7 +3,7 @@
 # 2. Load any libraries needed to connect to Firestore
 # 3. Connect to Firestore, using the service account key and the project ID
 # 4. Query Firestore for the data needed for the dbt project
-# 5. As a test, print the data to the console
+# 5. Load the data into environment variables, using the same naming convention as the dbt project
 
 # Import libraries
 import os

@@ -7,8 +7,9 @@ gcloud auth activate-service-account --key-file="/keys/service-account.json"
 pip3 install google-cloud-firestore
 
 # Retrieve values from Firesture using a dedicated Python script.
-python3 ./get_firestore_data.py
-printenv DBT_PY_TEST
+source ./get_firestore_data.py
+echo "Firestore data retrieved"
+printenv DBT_ENV_MKTO_TABLE_POSTFIX
 
 # Pulls the most recent version of the dependencies listed in your packages.yml from git
 #dbt deps --profiles-dir .
