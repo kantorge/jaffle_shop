@@ -5,6 +5,9 @@ version: '0.1'
 
 profile: 'jaffle_shop'
 
+vars:
+  mkto_table_postfix: '{{ env_var("DBT_ENV_MKTO_TABLE_POSTFIX") }}'
+
 model-paths: ["models"]
 seed-paths: ["seeds"]
 test-paths: ["tests"]

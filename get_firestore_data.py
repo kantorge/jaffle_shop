@@ -15,36 +15,44 @@ from google.cloud import firestore
 #keyfile_path = os.getenv('DBT_ENV_GCP_INSENTRIC_KEYFILE_DEV')
 keyfile_path = '/keys/service-account.json'
 
-# Set the project ID, referring the generic project ENV variable
-#project_id = os.getenv('DBT_ENV_GCP_INSENTRIC_PROJECT_DEV')
-project_id = 'beaming-might-304113'
+# Get the project ID from the service account key
+with open(keyfile_path) as f:
+    data = json.load(f)
+    project_id = data['project_id']
 
 # Set the collection name
-#collection_name = 'reports'
-collection_name = 'kestra-test'
+collection_name = 'dbt-settings'
 
 # Set the document name
-#document_name = 'sample-report'
-document_name = 'custom-document'
+document_name = 'dbt-settings'
 
 # Authenticate and initialize Firestore
 db = firestore.Client.from_service_account_json(keyfile_path)
 
 # Create a reference to the collection
-col_ref = db.collection(collection_name)
-
-# Create a query against the collection
-query_ref = col_ref#.where(u'field2', u'==', 'value2')
+query_ref = db.collection(collection_name)
 
 # Get the documents in the collection that match the query
 docs = query_ref.stream()
 
-# Print the data to the console
+# Define a local dictionary to hold the data, and load all available data into it
+data = {}
 for doc in docs:
-    print(f'{doc.id} => {doc.to_dict()}')
+    data[doc.id] = doc.to_dict()
 
-print(os.getenv('DBT_PY_TEST'))
-os.environ['DBT_PY_TEST'] = '2'
-print(os.getenv('DBT_PY_TEST'))
+# Define a list of the mandatory keys
+mandatory_keys = [
+    'insentric_schema_version',
+    'mkto_table_postfix',
+]
+
+# Validate if all mandatory keys are present. If not, raise an error.
+for key in mandatory_keys:
+    if key not in data:
+        raise Exception('The key ' + key + ' is missing from the Firestore document ' + document_name + ' in the collection ' + collection_name + '.')
+
+# Push all available data to the environment variables
+for key, value in data.items():
+    os.environ['DBT_ENV_' + key.upper()] = str(value)
 
 # End of script
