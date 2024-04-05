@@ -1,5 +1,9 @@
 {
     "extra-files": [
-        "dbt_project.yml"
+        {
+            "type": "yaml",
+            "path": "dbt_project.yml",
+            "jsonpath": "$.version"
+        }
     ]
 }
