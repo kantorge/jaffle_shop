@@ -1,0 +1,14 @@
+{
+    "packages": {
+        ".": {
+            "release-type": "simple",
+            "extra-files": [
+                {
+                    "type": "yaml",
+                    "path": "dbt_project.yml",
+                    "jsonpath": "$.version"
+                }
+            ]
+        }
+    }
+}
