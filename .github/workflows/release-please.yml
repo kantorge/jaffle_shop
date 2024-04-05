@@ -15,5 +15,5 @@ jobs:
     steps:
       - uses: google-github-actions/release-please-action@v4
         with:
-          release-type: Generic
-          extra-files: dbt_project.yml
+          release-type: simple
+          config-file: .github/release-please.json
