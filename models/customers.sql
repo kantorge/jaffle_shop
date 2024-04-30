@@ -34,7 +34,7 @@ customer_payments as (
 
     select
         orders.customer_id,
-        sum(amount) as total_amount
+        sum(payment.amount) as total_amount
 
     from payments
 
@@ -57,9 +57,11 @@ final as (
 
     from customers
 
-    left join customer_orders on customers.customer_id = customer_orders.customer_id
+    left join customer_orders
+        on customers.customer_id = customer_orders.customer_id
 
-    left join customer_payments on  customers.customer_id = customer_payments.customer_id
+    left join customer_payments
+        on customers.customer_id = customer_payments.customer_id
 
 )
 
