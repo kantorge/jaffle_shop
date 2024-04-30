@@ -1,0 +1,7 @@
+[sqlfluff]
+templater = dbt
+dialect = bigquery
+
+[sqlfluff:templater]
+project_dir = ./
+target = dev
