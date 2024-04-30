@@ -25,25 +25,17 @@ jobs:
         with:
           python-version: "3.10"
 
-      - name: Cache Python and DBT dependencies
+      - name: Cache Python
         uses: actions/cache@v4
         with:
           path: |
             ~/.cache/pip
-            ~/.dbt/packages.yml
           key: ${{ runner.os }}-pip-dbt-${{ hashFiles('**/packages.yml') }}
           restore-keys: |
-            ${{ runner.os }}-pip-dbt-
-
-      - name: Install dependencies
-        run: |
-          pip install dbt-bigquery
-          dbt deps --target sqlfluff
+            ${{ runner.os }}-pip-
 
       - name: Install SQLFluff
         run: "pip install sqlfluff"
-      - name: Install DBT templater
-        run: "pip install sqlfluff-templater-dbt"
 
       - name: Get changed SQL files in the models directory or its subdirectories
         id: get_file_changes
@@ -58,6 +50,7 @@ jobs:
         if: ${{ steps.get_file_changes.outputs.all_changed_files }} != ''
         shell: bash -l {0}
         run: sqlfluff lint --format github-annotation --annotation-level failure --nofail ${{ steps.get_file_changes.outputs.all_changed_files }} > annotations.json
+
       - name: Annotate
         uses: yuzutech/annotations-action@v0.5.0
         with:
